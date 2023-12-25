@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customer</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link href="stylesheets/customer.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+
+
+<body>
+    <%- include('nav', { user: user }) %>
+
+        <section>
+            <form id="search-bar" action="#" method="GET">
+                <input type="text" name="keyword" placeholder="Search...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+
+            <table id="cus_detail">
+                <thead class="table-header">
+                    <tr>
+                        <th>No.</th>
+                        <th>Customer</th>
+                        <th>Phone number</th>
+                        <th>Address</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+
+                <tbody class="table-body">
+                    <% customers.forEach((c, index)=> { %>
+                        <tr>
+                            <td>
+                                <%= index + 1 %>
+                            </td>
+                            <td>
+                                <%= c.name %>
+                            </td>
+                            <td>
+                                <%= c.phone %>
+                            </td>
+                            <td>
+                                <%= c.address %>
+                            </td>
+                            <td>
+                                <button class="table-body button">Purchase history</button>
+                            </td>
+                        </tr>
+                        <tr style="display: none;">
+                            <td colspan="5">
+                                <!-- table for purchase history -->
+                                <table id="cus_purchase">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>ID order</th>
+                                            <th>Total</th>
+                                            <th>purchase date</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="data-purchase" style="background-color: white;">
+                                            <td>1</td>
+                                            <td>123</td>
+                                            <td>$200</td>
+                                            <td>2023-12-19</td>
+                                            <td><button>Detail</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    <% }); %>   
+                </tbody>
+            </table>
+        </section>
+        <%- include('footer') %>
+</body>
+<script>
+    // Search
+
+
+    // open/close purchase_history table
+    $(document).ready(function () {
+        $(".table-body button").click(function () {
+            $(this).closest('tr').next().toggle();
+        });
+    });
+
+</script>
+
+</html>

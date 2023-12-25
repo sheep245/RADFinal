@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Employee</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link href="/stylesheets/employee.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+
+<body>
+    <%- include('nav', { user: user }) %>
+
+            <div id="Addbtn">
+                <button id="add-employee" onclick="showAddPopup()">Add employee</button>
+            </div>
+
+                <section>
+                    <table>
+                        <thead class="table-header">
+                            <tr>
+                                <th>No.</th>
+                                <th>Employee</th>
+                                <th>Account Status</th>
+                                <th>Account Lockout</th>
+                                <th>Role</th>
+                                <th>Manage</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-body">
+                            <% employees.forEach((e, index)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td class="img-name">
+                                        <% if (e.profile.avatar) { %>
+                                            <img class="avatar" src="/images/users/<%= e.username %>.png">
+                                            <%} else { %>
+                                                <img class="avatar" src="/images/users/avatar.png">
+                                                <% } %>
+
+                                                    <%= e.profile.name %>
+                                    </td>
+                                    <td>
+                                        <% if (e.active==true) { %>
+                                            Activated
+                                            <% } else { %>
+                                                Inactive
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (e.lock==true) { %>
+                                            Locked
+                                            <% } else { %>
+                                                Unlock
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <%= e.role %>
+                                    </td>
+                                    <td>
+                                        <i class="fa fa-edit" <% if (user.role == 'Super Admin' ) { %>
+                                                                    onclick="showPopup('<%= JSON.stringify(e) %>')"
+                                                                <% } else if (e.role !=='Super Admin') { %>
+                                                                        onclick="showPopup('<%= JSON.stringify(e) %>')"
+                                                                <% } %> ></i>
+                                        <% if (user.role==='Super Admin' ) { %>
+                                            <div class="dropdown">
+                                                <i class="fa fa-ellipsis-h dropdown-toggle" data-toggle="dropdown"></i>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" onclick="showDeleteConfirmation('<%= e.username %>')">
+                                                        <i class="fas fa-trash-alt"></i> Delete
+                                                    </a>
+                                                    <a class="dropdown-item" href="/employee/resendLink/<%= e.username %>">
+                                                        <i class="fas fa-redo"></i> Resend link
+                                                    </a>
+                                                    <a class="dropdown-item" href="/employee/lock/<%= e.username %>">
+                                                        <i class="fas fa-lock"></i> Locked Status
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <% } else if (user.role==='Admin' && e.role =='Staff' ) { %>
+                                                <div class="dropdown">
+                                                    <i class="fa fa-ellipsis-h dropdown-toggle" data-toggle="dropdown"></i>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" onclick="showDeleteConfirmation('<%= e.username %>')">
+                                                            <i class="fas fa-trash-alt"></i> Delete
+                                                        </a>
+                                                        <a class="dropdown-item" href="/employee/resendLink/<%= e.username %>">
+                                                            <i class="fas fa-redo"></i> Resend link
+                                                        </a>
+                                                        <a class="dropdown-item" href="/employee/lock/<%= e.username %>">
+                                                            <i class="fas fa-lock"></i> Locked Status
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+
+                                        
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+
+                    <div id="myPopup" class="popup" style="display: none;">
+                        <form id="addEmployeeForm">
+                            <div class="popup-content">
+                                <span class="close" onclick="hideAddPopup(); resetAddEmployeeForm()">&times;</span>
+                                <h2>Add Employee</h2>
+                                <label for="fullname">Full Name:</label><br>
+                                <input type="text" id="fullname" name="fullname"><br>
+
+                                <label for="email">Email:</label><br>
+                                <input type="text" id="email" name="email"><br>
+
+                                <label for="gender">Gender:</label><br>
+                                <select id="gender" name="gender">
+                                    <option value="" disabled selected hidden>Choose an option</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select><br>
+
+                                <label for="dob">Date of Birth:</label><br>
+                                <input type="date" id="dob" name="dob"><br>
+
+                                <label for="phone">Phone:</label><br>
+                                <input type="text" id="phone" name="phone"><br>
+
+                                <label for="address">Address:</label><br>
+                                <input type="text" id="address" name="address"><br>
+
+                                <% if( user.role == 'Super Admin' ) { %>
+                                <label for="role">Role:</label><br>
+                                <select id="role" name="role">
+                                    <option value="Staff" selected>Staff</option>
+                                    <option value="Admin">Admin</option>
+                                </select><br>
+                                <% } %>
+
+                                <div id="error-message" style="display:none;" class="alert"></div>
+
+                                <div class="button">
+                                    <input type="submit" value="Add employee">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="myEditPopup" class="Editpopup" style="display: none;">
+                        <form id="editForm" method="POST" action="/employee/editEmployee">
+                            <div class="popup-content">
+                                <span class="close" onclick="hidePopup()">&times;</span>
+                                <h2>Employee details</h2>
+                                <label for="fullname">Full Name:</label><br>
+                                <input type="text" id="edit_fullname" name="fullname"><br>
+                                <label for="email">Email:</label><br>
+                                <input type="email" id="edit_email" name="email"><br>
+                                <label for="gender">Gender:</label><br>
+                                <select id="edit_gender" name="gender">
+                                    <option value="" disabled selected hidden>Choose an option</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select><br>
+                                <label for="dob">Date of Birth:</label><br>
+                                <input type="date" id="edit_dob" name="dob"><br>
+                                <label for="phone">Phone:</label><br>
+                                <input type="text" id="edit_phone" name="phone"><br>
+                                <label for="address">Address:</label><br>
+                                <input type="text" id="edit_address" name="address"><br>
+                                <% if( user.role == 'Super Admin' ) { %>
+                                <div id="edit_role_section" style="display: none;">
+                                    <label for="role">Role:</label><br>
+                                    <select id="edit_role" name="role">
+                                        <option value="Admin">Admin</option>
+                                        <option value="Staff">Staff</option>
+                                    </select><br>
+                                </div>
+                                <% } %>
+
+                                <div id="error-message2" style="display:none;" class="alert alert-danger"></div>
+
+                                <div class="button">
+                                    <input type="submit" value="Confirm">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <%- include('footer') %>
+</body>
+<script>
+    function showDeleteConfirmation(username) {
+            if (confirm("Are you sure you want to delete this employee?")) {
+                window.location.href = '/employee/delete/' + username;
+            }
+        }
+    function showPopup(employeeData) {
+        if (typeof employeeData === 'string') {
+            employeeData = JSON.parse(employeeData);
+        }
+        document.getElementById("edit_fullname").value = employeeData.profile.name || '';
+        document.getElementById("edit_email").value = employeeData.profile.email || '';
+        document.getElementById("edit_gender").value = employeeData.profile.gender || '';
+        document.getElementById("edit_dob").value = employeeData.profile.dateOfBirth || '';
+        document.getElementById("edit_phone").value = employeeData.profile.phone || '';
+        document.getElementById("edit_address").value = employeeData.profile.address || '';
+
+        var roleElement = document.getElementById("edit_role_section");
+        const role = '<%= user.role %>'
+        if (role == 'Super Admin') {
+            roleElement.style.display = "block";
+        }
+        if (employeeData.role === 'Super Admin') {
+            roleElement.style.display = "none";
+        } 
+
+
+        var popup = document.getElementById("myEditPopup");
+        popup.style.display = "block";
+
+        document.getElementById("editForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const preFormData = new FormData(this)
+            const formData = new URLSearchParams(preFormData)
+
+            fetch('/employee/editEmployee', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => {
+                    return res.json()
+                }).then(data => {
+                    var errorDiv = document.getElementById('error-message2')
+                    if (data.success) {
+                        location.reload()
+                    } else {
+                        errorDiv.innerText = data.error
+                        errorDiv.style.display = 'block'
+                    }
+                })
+                .catch(function (error) {
+                    var errorDiv = document.getElementById('error-message2')
+                    errorDiv.innerText = 'An error occurred while editing an employee'
+                    errorDiv.style.display = 'block'
+                })
+        })
+    }
+
+    function hidePopup() {
+        var popup = document.getElementById("myEditPopup")
+        popup.style.display = "none"
+    }
+
+    function showAddPopup() {
+        var popup = document.getElementById("myPopup")
+        popup.style.display = "block"
+
+        const form = document.getElementById('addEmployeeForm')
+        form.addEventListener('submit', function (event) {
+            event.preventDefault()
+
+            const preFormData = new FormData(form)
+            const formData = new URLSearchParams(preFormData)
+            fetch('/employee/addEmployee', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => {
+                    return res.json()
+                }).then(data => {
+                    var errorDiv = document.getElementById('error-message')
+                    if (data.success) {
+                        location.reload()
+                    } else {
+                        errorDiv.innerText = data.error
+                        errorDiv.style.display = 'block'
+                    }
+                })
+                .catch(function (error) {
+                    var errorDiv = document.getElementById('error-message')
+                    errorDiv.innerText = 'An error occurred while adding an employee'
+                    errorDiv.style.display = 'block'
+                })
+        })
+    }
+
+    function resetAddEmployeeForm() {
+        document.getElementById("addEmployeeForm").reset();
+        var errorDiv = document.getElementById('error-message');
+        errorDiv.innerText = '';
+        errorDiv.style.display = 'none';
+    }
+
+    function hideAddPopup() {
+        var popup = document.getElementById("myPopup");
+        popup.style.display = "none";
+    }
+
+</script>
+</html>

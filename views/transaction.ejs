@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction processing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link href="/stylesheets/transaction.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+</head>
+
+<body>
+    <%- include('nav') %>
+        <section>
+            <div id="left-panel">
+                <!-- Search bar -->
+                <form id="search-bar" action="/transaction/search" method="GET">
+                    <input type="text" name="keyword" placeholder="Search...">
+                </form>
+
+                <div id="product-grid">
+                    <!-- Product display -->
+                    <%products.forEach(function(product){%>
+                        <div class="product">
+                            <img src="<%=product.productImage%>" alt="product image"><br>
+                            <p>
+                                <%= product.name %>
+                            </p>
+                            <button class="add-button" data-price="<%= product.retail_price %>"
+                                data-productid="<%=product._id%>"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <%});%>
+                </div>
+            </div>
+            <div id="right-panel">
+                <!-- add Customer -->
+                <!-- The Modal -->
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <form id="customerForm" onsubmit="event.preventDefault(); displayCustomerName();">
+                            <label for="phone">Phone number:</label><br>
+                            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}"
+                                title="Phone number must be exactly 10 digits" required><br>
+                            <label for="name">Full name:</label><br>
+                            <input type="text" id="name" name="name" pattern="[\p{L}\s]+"
+                                title="Full name can contain letters and spaces" required><br>
+                            <label for="address">Address:</label><br>
+                            <input type="text" id="address" name="address"><br>
+                            <input type="submit" value="Check" name="customer-gave">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="products-container"></div>
+
+                <div id="total_charge">
+                    <!-- Total and payment button -->
+                    <p class="total">Total:<span id="totalMoney"></span> $</p>
+                    <p class="cus-amount">Customer gave: <input id="customerGave" type="text"> $</p>
+                    <p class="back-amount">Remaining:<span id="remainMoney"></span> $</p>
+                    <button class="charge">Confirm</button>
+                </div>
+
+            </div>
+        </section>
+        <%- include('footer') %>
+
+</body>
+<script>
+    /*Search*/
+    $('#search-bar').on('submit', function (event) {
+        event.preventDefault();
+
+        const keyword = $('input[name="keyword"]').val();
+
+        $.ajax({
+            url: '/transaction/search',
+            method: 'GET',
+            data: { keyword: keyword },
+            success: function (products) {
+                // delete product
+                $('#product-grid').empty();
+
+                // show product 
+                products.forEach(function (product) {
+                    $('#product-grid').append(`
+                    <div class="product">
+                        <img src="${product.productImage}" alt="product image"><br>
+                        <p>${product.name}</p>
+                        <button class="add-button" data-price="${product.retail_price}"><i class="fas fa-plus"></i></button>
+                    </div>
+                `);
+                });
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    /*Add customer*/
+    // function openModal() {
+    //     var modal = document.getElementById("myModal");
+    //     if (modal.style.display === "none" || modal.style.display === "") {
+    //         modal.style.display = "block";
+    //     } else {
+    //         modal.style.display = "none";
+    //     }
+    // }
+
+    document.getElementById('phone').addEventListener('change', function () {
+        var phone = this.value
+
+        fetch('/customer/check-customer/' + phone)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.exists) {
+                    document.getElementById('name').value = data.customer.name;
+                    document.getElementById('address').value = data.customer.address;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:' + error);
+            });
+    })
+
+    // $('#customerForm').submit(function (event) {
+    //         event.preventDefault();
+    //         var phone = $('#phone').val();
+    //         var name = $('#name').val();
+    //         var address = $('#address').val();
+    //         // $('.customer-name').html('Customer: ' + name);
+    //         $.ajax({
+    //             url: '/save-customer',
+    //             type: 'POST',
+    //             data: JSON.stringify({ phone: phone, name: name, address: address }),
+    //             contentType: 'application/json',
+    //             success: function (data) {
+    //                 console.log(data);
+    //             }
+    //         })
+    //     })
+
+    // create div '.products-container' if not exist
+    if ($(".products-container").length === 0) {
+        $("body").append('<div class="products-container"></div>');
+    }
+    /*product list-view*/
+    $(document).on('click', '.add-button', function () {
+        var product = $(this).closest(".product");
+        var productImage = product.find("img").attr("src");
+        var productName = product.find("p").text();
+        var productPrice = $(this).data("price");
+        var productId = $(this).data("productid");
+
+        var existingProduct = $(".product-summary:contains('" + productName + "')");
+
+        if (existingProduct.length > 0) {
+            var quantityInput = existingProduct.find(".quantity");
+            var currentQuantity = parseInt(quantityInput.val());
+            quantityInput.val(currentQuantity + 1);
+
+            var priceElement = existingProduct.find(".price");
+            var currentPrice = parseFloat(priceElement.text().replace("Price: ", "").replace(" $", ""));
+            priceElement.text("Price: " + ((currentQuantity + 1) * productPrice) + " $");
+        } else {
+
+            var productSummary = `
+                <div class="product-summary">
+                    <img src="${productImage}" alt="product image">
+                    <div class="product-info">
+                        <p class="name">${productName}</p>
+                        <input type="number" min="1" value="1" class="quantity" data-price="${productPrice}">
+                        <p class="price">Price: ${productPrice * 1} $</p>
+                        <p class="id" style="display: none">${productId}</p>
+                        <button class='delete-button'><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            $(".products-container").append(productSummary);
+        }
+        updateTotal();
+    });
+
+
+    // Delete product - listview
+    $(document).on("click", ".delete-button", function () {
+        $(this).closest(".product-summary").remove()
+        updateTotal()
+    })
+
+    /*Change with quantity*/
+    $(document).on("change", ".quantity", function () {
+        var quantityInput = $(this)
+        var quantity = parseInt(quantityInput.val());
+        var pricePerUnit = parseFloat(quantityInput.data("price"))
+
+        var priceElement = quantityInput.closest(".product-summary").find(".price")
+        priceElement.text("Price: " + (pricePerUnit * quantity) + " $")
+
+        updateTotal()
+    })
+
+    function updateTotal() {
+        var total = 0;
+
+        $(".product-summary").each(function () {
+            var name = $(this).find(".name").text();
+            var quantity = parseInt($(this).find(".quantity").val());
+            var pricePerUnit = parseFloat($(this).find(".price").text().replace("Price: ", "").replace(" $", ""));
+            total += quantity * pricePerUnit;
+        });
+
+        // $(".total").text("Total: " + total.toFixed(2) + " $");
+        $("#totalMoney").html(total.toFixed(2));
+        return total.toFixed(2);
+    }
+    /*show customer's name*/
+    function displayCustomerName(name) {
+        $('.customer-name').html('Customer: ' + name);
+    }
+    /*Calculate customer payments*/
+    $(document).ready(function () {
+        $('.cus-amount input').on('input', function () {
+            var total = parseFloat($('#totalMoney').html());
+            var customerGave = parseFloat($(this).val());
+            var giveBack = total - customerGave;
+
+            if (!isNaN(giveBack)) {
+                //$('.back-amount').text('Remaining: ' + giveBack.toFixed(2) + ' $');
+                $("#remainMoney").html(giveBack.toFixed(2))
+            }
+        });
+    });
+
+
+
+    /*Payment*/
+    $(document).on("click", ".charge", function () {
+        // Check if customerForm is filled
+        var phone = $('#phone').val()
+        var name = $('#name').val()
+        var address = $('#address').val()
+        if (!phone || !name || !address) {
+            alert("Please fill out the customer information.")
+            return
+        }
+        // Check if products-container has items
+        var productsContainerLength = $('.products-container .product-summary').length;
+        if (productsContainerLength === 0) {
+            alert("Please add products to the transaction.")
+            return
+        }
+        // Get transaction details
+        var total = parseFloat($('#totalMoney').html());
+        var customerGave = parseFloat($('#customerGave').val());
+
+        if (!customerGave) {
+            alert("Please fill out the amount of customer gave")
+        }
+        var giveBack = total - customerGave;
+        // Prepare data for the transaction
+        var transactionData = {
+            total: total.toFixed(2),
+            phone: phone,
+            name,
+            address,
+            customerGave: customerGave.toFixed(2),
+            remaining: giveBack.toFixed(2),
+            products: []
+        };
+        // Get product details from products-container
+        $('.products-container .product-summary').each(function () {
+            var productName = $(this).find(".name").text();
+            var quantity = parseInt($(this).find(".quantity").val())
+            var pricePerUnit = parseFloat($(this).find(".price").text().replace("Price: ", "").replace(" $", ""))
+            var id = $(this).find(".id").text()
+            transactionData.products.push({
+                name: productName,
+                product_id: id,
+                quantity: quantity,
+                price_per_unit: pricePerUnit.toFixed(2)
+            })
+        })
+        // Save transaction data to the MongoDB database (you need to implement the server-side endpoint for this)
+        $.ajax({
+            url: '/transaction/save-transaction',
+            type: 'POST',
+            data: JSON.stringify(transactionData),
+            contentType: 'application/json',
+            success: function (data) {
+                console.log("Transaction saved:", data);
+                var stringProduct = "";
+                for (let item of data.data.transaction.products) {
+                    console.log("item:", item);
+                    stringProduct = stringProduct + "\nName: " + item.name + "| Quantity:" + item.quantity + "| Price Per Unit:" + item.price_per_unit
+                }
+                alert("Xử lý đơn hàng thành công: \nTên KH:" +
+                    data.data.user.name +
+                    "\nSản Phẩm:" + stringProduct +
+                    "\nTổng tiền: " + data.data.transaction.total_cost +
+                    "\nKhách đưa: " + data.data.transaction.customerGave +
+                    "\nCòn Lại: " + data.data.transaction.remaining +
+                    "\nThời Gian: " + data.data.transaction.transaction_date);
+            },
+            error: function (error) {
+                console.error('Error saving transaction:', error);
+            }
+        });
+    });
+
+
+</script>
+
+</html>

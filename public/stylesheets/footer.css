@@ -1,0 +1,16 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+footer{
+    background: rgb(0, 21, 41);
+    color: white;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+
+p {
+    padding: 0.5%;
+}

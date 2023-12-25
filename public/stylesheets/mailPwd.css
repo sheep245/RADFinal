@@ -1,0 +1,20 @@
+ form h1{
+    color:#97ebad;
+    font-size: 35px;
+    padding-bottom:2%;
+  }
+
+p{
+    color: white;
+    text-align: justify;
+    font-size: 20px;
+}
+a{
+    color: rgb(60, 190, 255);
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+button{
+      margin-top:5%;
+    }

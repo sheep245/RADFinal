@@ -1,0 +1,38 @@
+*{
+    padding:0;
+    margin:0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+section{
+    display: flex;
+    align-items: center;
+    background: linear-gradient(rgba(255, 255, 255, 0.681), rgba(255, 255, 255, 0.917)), url('/images/background.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+.textDscrpt {
+    display: flex;
+    align-items: center;
+    overflow: auto;
+}
+.textDscrpt h1 {
+    line-height: 90px;
+    padding-left: 2%;
+    position:absolute;
+    color:rgb(65, 39, 132);
+    text-transform: uppercase;
+    font-size: 50px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.textDscrpt b{
+    color:rgb(192, 61, 70);
+    font-size: 70px;
+}

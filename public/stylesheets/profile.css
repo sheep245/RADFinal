@@ -1,0 +1,294 @@
+*{
+    padding:0;
+    margin:0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #E0EEEE;
+}
+
+.alert {
+  padding: 20px;
+  background-color: #f2dede; /* Red */
+  color: rgb(138, 37, 37);
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+/* #nav{
+    position: static !important;
+} */
+
+#footer{
+    margin-top: auto;
+}
+
+#profile {
+    background-color: rgb(189, 241, 225);
+    border: 1px solid rgb(92, 92, 92);
+    border-radius: 20px;
+    width:30%;
+    /* height:750px; */
+    height:100%;
+    display: flex;
+    /* justify-content: center; */
+    align-items: stretch;
+    flex-direction: column;
+    margin: 3% auto;
+}
+#profile h1{
+    text-align: center;
+}
+#profile .avatar-section {
+    padding-top:2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 1px solid rgb(58, 58, 58);
+    /* box-shadow: 0 0 10% 5% rgba(0, 0, 0, 0.5); */
+    /* filter: brightness(120%) contrast(1.3) saturate(1.1); */
+}
+
+#profile button {
+    background-color: #4c51af;
+    margin-top: 5%;
+    color: white;
+    padding:4% 5%;
+    border-radius: 10px;
+    border:none;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding:4% 4%;
+}
+
+form label {
+    font-weight: bold;
+}
+
+form input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    width: auto;
+    margin:0 2%;
+}
+
+/* Style the popup */
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Style the popup content */
+.popup-content {
+    border-radius: 20px;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+}
+
+/* Style the close button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Style the form inside the popup */
+.popup-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style the label inside the form */
+.popup-content form label {
+    margin-bottom: 10px;
+}
+
+/* Style the input fields inside the form */
+.popup-content form input[type="file"],
+.popup-content form input[type="submit"] {
+    margin-bottom: 20px;
+}
+
+/* Style the button container */
+.popup-content form .button-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Style the back button */
+#back {
+    border-radius: 10px;
+    background-color: #ccc;
+    border: none;
+    padding: 2% 4%;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0 2%;
+    cursor: pointer;
+}
+#back a{
+    color: white;
+    text-decoration: none;
+}
+#update{
+    cursor: pointer;
+    border:none;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 0 4%;
+    color:white;
+    background-color: rgb(60, 125, 238);
+}
+
+#back:hover{
+    background-color: #989898;
+}
+
+#update:hover{
+    background-color: rgb(48, 104, 201);
+}
+ 
+    @media screen and (min-width: 768px) and (max-width: 992px){
+        #profile {
+            background-color: rgb(189, 241, 225);
+            border: 1px solid rgb(92, 92, 92);
+            border-radius: 20px;
+            width:30%;
+            /* height:750px; */
+            height:100%;
+            display: flex;
+            /* justify-content: center; */
+            align-items: stretch;
+            flex-direction: column;
+            margin: 3% auto;
+        }
+        
+        h1{
+            text-align: center;
+            width: 80%;
+        }
+
+        #profile button {
+            background-color: #4c51af;
+            margin-top: 5%;
+            color: white;
+            padding:4% 5%;
+            border-radius: 10px;
+            border:none;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        #profile img {
+            width: 150px;
+            height: 150px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-left:4%;
+        }
+        
+        form label {
+            font-weight: bold;
+        }
+        
+        form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+            width: auto;
+        }
+    }
+
+
+    @media screen and (max-width: 768px) {
+        #profile {
+            background-color: rgb(189, 241, 225);
+            border: 1px solid rgb(92, 92, 92);
+            border-radius: 20px;
+            width:30%;
+            /* height:750px; */
+            height:100%;
+            display: flex;
+            /* justify-content: center; */
+            align-items: stretch;
+            flex-direction: column;
+            margin: 3% auto;
+        }
+        
+        #profile button {
+            background-color: #4c51af;
+            margin-top: 5%;
+            color: white;
+            padding:4% 5%;
+            border-radius: 10px;
+            border:none;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        #profile img {
+            width: 120px;
+            height: 120px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding-left:3%;
+        }
+        
+        form label {
+            font-weight: bold;
+        }
+        
+        form input {
+            padding: 7px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+            width: auto;
+            margin: 0 3%;
+        }
+    }
+

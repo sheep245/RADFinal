@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin's product page</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link href="/stylesheets/product.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body>
+    <%- include('nav') %>
+
+        <!-- Search bar -->
+        <% if (user.role !='Staff' ) { %>
+            <form id="search-bar-admin" action="/product/search" method="GET">
+                <input type="text" name="keyword" placeholder="Search...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <% } else { %>
+
+                <!-- Search bar -->
+                <form id="search-bar-staff" action="/product/search" method="GET">
+                    <input type="text" name="keyword" placeholder="Search...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <% }%> <!-- -->
+                    <% if (user.role !='Staff' ) { %>
+                        <div id="Addbtn">
+                            <!-- Add product button -->
+                            <button id="add-product" onclick="openPopup()">Add product</button>
+                        </div>
+                        <% } %>
+
+                            <section>
+                                <!-- Product grid -->
+                                <div id="product-grid">
+                                    <% products.forEach(function(product) { %>
+                                        <div class="product">
+                                            <img src="<%= product.productImage %>" alt="Product image">
+                                            <p class="item">
+                                                <%= product.name %>
+                                            </p>
+                                            <p class="price">
+                                                <%= product.retail_price %> $
+                                            </p>
+                                            <% if (user.role !='Staff' ) { %>
+                                                <div class="icon-container">
+                                                    <!-- Edit product button -->
+                                                    <form>
+                                                        <button class="edit-product"
+                                                            data-product-id="<%= product._id %>"><i
+                                                                class="fas fa-edit"></i></button>
+                                                    </form>
+
+
+                                                    <!-- Delete product -->
+                                                    <form action="/product/delete/<%= product._id %>" method="POST">
+                                                        <button type="submit" class="delete-product"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                                <% } else { %>
+                                                    <form>
+                                                        <button class="edit-product-forStaf"
+                                                            data-product-id="<%= product._id %>"><i
+                                                                class="fas fa-edit"></i></button>
+                                                    </form>
+                                                    <% }%>
+
+                                        </div>
+                                        <% }); %>
+                                </div>
+                            </section>
+
+                            <!-- The popup form - Add product -->
+                            <form id="popupForm" enctype="multipart/form-data"
+                                style=" display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                <span id="closeButton" onclick="closePopup()"
+                                    style="float:right; cursor:pointer;">x</span>
+                                <h2>Add new product</h2>
+
+                                <label for="productName">Product Name:</label><br>
+                                <input type="text" id="productName" name="productName" placeholder="Enter name"><br>
+
+                                <label for="importPrice">Import Price:</label><br>
+                                <input type="text" id="importPrice" name="importPrice" placeholder="Enter number"><br>
+
+                                <label for="retailPrice">Retail Price:</label><br>
+                                <input type="text" id="retailPrice" name="retailPrice" placeholder="Enter number"><br>
+
+                                <label for="category">Category:</label><br>
+                                <input type="text" id="category" name="category" placeholder="Enter category"><br>
+
+                                <label for="productImage">Product Image:</label><br>
+                                <input type="file" id="productImage" name="productImage"
+                                    onchange="previewImage(event)"><br>
+
+                                <img id="imagePreview" src="" style="display:none; width:100px; height:100px;"><br>
+
+                                <div id="error-message" style="display:none;" class="alert alert-danger"></div>
+
+                                <div id="success"
+                                    style="display: none; color: rgb(27, 100, 27); background-color: rgb(149, 219, 149);"
+                                    class="alert alert-success"></div>
+                                <button>Create</button>
+                            </form>
+
+                            <% products.forEach(function(product) { %>
+                                <% if (user.role !='Staff' ) { %>
+                                    <form id="editProductForm-<%= product._id %>" class="editProductForm"
+                                        enctype="multipart/form-data"
+                                        style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <!-- The edit product popup form -->
+                                        <span id="closeeditPopup" onclick="closeeditPopup()"
+                                            style="float:right; cursor:pointer;">x</span>
+                                        <h2>Product details</h2>
+                                        <label for="barcode">Barcode:</label><br>
+                                        <input type="text" id="barcode-<%= product._id %>" name="barcode"
+                                            value="<%= product.barcode %>" readonly disabled><br>
+
+                                        <label for="productName">Product Name:</label><br>
+                                        <input type="text" id="productName" name="productName"
+                                            value="<%= product.name %>"><br>
+
+                                        <label for="importPrice">Import Price:</label><br>
+                                        <input type="text" id="importPrice" name="importPrice"
+                                            value="<%= product.import_price %>"><br>
+
+                                        <label for="retailPrice">Retail Price:</label><br>
+                                        <input type="text" id="retailPrice" name="retailPrice"
+                                            value="<%= product.retail_price %>"><br>
+
+                                        <label for="category">Category:</label><br>
+                                        <input type="text" id="category" name="category"
+                                            value="<%= product.category %>"><br>
+
+                                        <label for="created_at">Creation Date:</label><br>
+                                        <input type="date" id="created_at" name="created_at"
+                                            value="<%= product.created_at.toISOString().split('T')[0] %>" readonly><br>
+
+                                        <label for="productImage">Product Image:</label><br>
+                                        <img id="productImageDisplay-<%= product._id %>" class="imageEdit"
+                                            src="<%= product.productImage %>" alt="Product Image">
+
+                                        <input type="file" id="productImage" name="productImage"
+                                            onchange="previewImageEdit(event)"><br>
+
+                                        <img id="imageEditPreview" src=""
+                                            style="display:none; width:100px; height:100px;"><br>
+
+                                        <div id="error-message2" style="display:none;" class="alert alert-danger"></div>
+
+                                        <button>Update product</button>
+                                    </form>
+                                    <% } else { %>
+                                        <form id="editProductFormStaff-<%= product._id %>" class="editProductForm"
+                                            action="/product/edit/<%= product._id %>" method="POST"
+                                            enctype="multipart/form-data"
+                                            style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                            <!-- The edit product popup form -->
+                                            <span id="closeeditPopup" onclick="closeeditPopupStaff()"
+                                                style="float:right; cursor:pointer;">x</span>
+                                            <h2>Product details</h2>
+                                            <label for="barcode">Barcode:</label><br>
+                                            <input type="text" id="barcode" name="barcode"
+                                                value="<%= product.barcode %>" readonly disabled><br>
+
+                                            <label for="productName">Product Name:</label><br>
+                                            <input type="text" id="productName" name="productName"
+                                                value="<%= product.name %>" disabled><br>
+
+                                            <label for="retailPrice">Retail Price:</label><br>
+                                            <input type="text" id="retailPrice" name="retailPrice"
+                                                value="<%= product.retail_price %>" disabled><br>
+
+                                            <label for="category">Category:</label><br>
+                                            <input type="text" id="category" name="category"
+                                                value="<%= product.category %>" disabled><br>
+
+                                            <label for="created_at">Creation Date:</label><br>
+                                            <input type="date" id="created_at" name="created_at"
+                                                value="<%= product.created_at.toISOString().split('T')[0] %>" readonly
+                                                disabled><br>
+
+                                            <label for="productImage">Product Image:</label><br>
+                                            <img id="productImageDisplayStaff-<%= product._id %>" class="imageEdit"
+                                                src="<%= product.productImage %>" alt="Product Image"
+                                                name="productImage">
+
+
+                                        </form>
+                                        <% }%>
+
+                                            <% }); %>
+
+                                                <%- include('footer') %>
+</body>
+<script>
+    // ******* ADD *******
+    function previewImage(event) {
+        const fileInput = event.target;
+
+        if (fileInput.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('imagePreview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerText = 'No file selected';
+            errorDiv.style.display = 'block';
+        }
+    }
+
+
+    function openPopup() {
+        const popupForm = document.getElementById('popupForm')
+        popupForm.style.display = 'block'
+    }
+
+    function closePopup() {
+        const popupForm = document.getElementById('popupForm')
+        popupForm.style.display = 'none'
+    }
+
+    // ******* SEARCH *******
+
+    // *** for Admin ***
+    $(document).ready(function () {
+        $("#search-bar-admin").on("submit", function (e) {
+            e.preventDefault();
+            var keyword = $(this).find('input[name="keyword"]').val();
+            $.ajax({
+                url: '/product/search?keyword=' + keyword,
+                type: 'GET',
+                success: function (data) {
+                    // Update the product grid with the search results
+                    var productGrid = $("#product-grid");
+                    productGrid.empty();
+                    data.forEach(function (product) {
+                        productGrid.append(`
+        <div class="product">
+          <img src="${product.productImage}" alt="Product image">
+          <p class="item">${product.name}</p>
+          <p class="price">${product.retail_price} $</p>
+          <div class="icon-container">
+            <button class="edit-product" data-product-id="${product._id}"><i class="fas fa-edit"></i></button>
+            <form action="/product/delete/${product._id}" method="POST">
+              <button type="submit" class="delete-product"><i class="fas fa-trash"></i></button>
+            </form>
+          </div>
+        </div>
+      `);
+                        // Attach event handlers to the new edit button
+                        $('.edit-product').last().on('click', function () {
+                            var productId = $(this).data('product-id');
+                            $('#editProductForm-' + productId).show();
+                        });
+                    });
+                }
+            });
+        });
+    });
+
+    // *** for Staff ***
+    $(document).ready(function () {
+        $("#search-bar-staff").on("submit", function (e) {
+            e.preventDefault();
+            var keyword = $(this).find('input[name="keyword"]').val();
+            $.ajax({
+                url: '/product/search?keyword=' + keyword,
+                type: 'GET',
+                success: function (data) {
+                    var productGrid = $("#product-grid");
+                    productGrid.empty();
+                    data.forEach(function (product) {
+                        productGrid.append(`
+        <div class="product">
+          <img src="${product.productImage}" alt="Product image">
+          <p class="item">${product.name}</p>
+          <p class="price">${product.retail_price} $</p>
+          <div class="icon-container">
+            <button class="edit-product-forStaf" data-product-id="${product._id}"><i class="fas fa-edit"></i></button>
+            </form>
+          </div>
+        </div>
+      `);
+                        $('.edit-product-forStaf').last().on('click', function () {
+                            var productId = $(this).data('product-id');
+                            $('#editProductFormStaff-' + productId).show();
+                        });
+                    });
+                }
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('popupForm')
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault()
+
+            const errorDiv = document.getElementById('error-message')
+            errorDiv.innerText = ''
+            errorDiv.style.display = 'none'
+
+            const formData = new FormData(form)
+            fetch('/product/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload()
+                    } else {
+                        errorDiv.innerText = data.error
+                        errorDiv.style.display = 'block'
+                    }
+                })
+                .catch(error => {
+                    errorDiv.innerText = 'An error occurred while adding a product'
+                    errorDiv.style.display = 'block'
+                })
+        })
+    })
+
+
+    function closeeditPopup() {
+        $('form[id^="editProductForm-"]').each(function () {
+            $(this).hide();
+        });
+    }
+
+    function previewImageEdit(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('productImageDisplay-' + event.target.form.id.split('-')[1]);
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+
+
+    $(document).ready(function () {
+        $(document).on('click', '.edit-product', function (event) {
+            event.preventDefault();
+
+            const productId = $(this).data('productId')
+            $.get('/product/edit/' + productId, function (product) {
+                $('#editProductForm-' + productId + ' input[name="barcode"]').val(product.barcode)
+                $('#productImageDisplay-' + productId).attr('src', product.productImage)
+                $('#editProductForm-' + productId).show()
+            })
+        })
+    })
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const forms = document.querySelectorAll('.editProductForm');
+
+        forms.forEach((form) => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault()
+
+                const errorDiv = document.getElementById('error-message2')
+                errorDiv.innerText = ''
+                errorDiv.style.display = 'none'
+
+                const formData = new FormData(form)
+                const productId = form.id.split('-')[1]
+
+                fetch(`/product/edit/${productId}`, {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            errorDiv.innerText = data.error
+                            errorDiv.style.display = 'block'
+                        }
+                    })
+                    .catch((error) => {
+                        errorDiv.innerText = 'An error occurred while submitting the form'
+                        errorDiv.style.display = 'block'
+                    })
+            })
+        })
+    });
+
+    function closeeditPopupStaff() {
+        $('form[id^="editProductFormStaff-"]').hide()
+    }
+
+    $(document).ready(function () {
+        $(document).on('click', '.edit-product-forStaf', function (event) {
+            event.preventDefault();
+            const productId = $(this).data('productId')
+            $.get('/product/edit/' + productId, function (product) {
+                $('#editProductFormStaff-' + productId + ' input[name="barcode"]').val(product.barcode)
+                $('#productImageDisplayStaff-' + productId).attr('src', product.productImage)
+                $('#editProductFormStaff-' + productId).show()
+            })
+        })
+
+        $(document).on('submit', 'form[id^="editProductFormStaff-"]', function (event) {
+            const formData = new FormData(this)
+        })
+    })
+</script>
+
+</html>

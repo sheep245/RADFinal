@@ -1,0 +1,344 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #E0EEEE;
+}
+#nav {
+  position: static !important;
+}
+#footer {
+  margin-top: auto;
+}
+/*Search - add button*/
+#Addbtn {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1% 2%;
+}
+
+#add-employee {
+  width: 10%;
+  padding: 1%;
+  border-radius: 10px;
+  background-color: rgb(58, 77, 148);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  display: inline-block;
+}
+#add-employee:hover {
+  background-color: rgb(41, 61, 133);
+}
+
+#search-bar {
+  display: flex;
+  margin: 1% 0;
+  position: relative;
+  justify-content: center;
+}
+
+#search-bar input {
+  width: 95%;
+  padding: 1%;
+  font-size: 16px;
+  border-radius: 20px;
+  border: 2px solid rgb(58, 77, 148);
+}
+#search-bar button {
+  position: absolute;
+  right: 4%;
+  top: 0;
+  bottom: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+#search-bar button i {
+  font-size: 22px;
+  color: rgb(58, 77, 148);
+}
+table {
+  background-color: white;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid #c4c4c4;
+}
+
+th,
+td {
+  padding: 1%;
+  text-align: left;
+  text-align: center;
+}
+td .dropdown-item {
+  text-align: justify;
+}
+th {
+  background-color: #9af6e8;
+  text-transform: uppercase;
+}
+
+tr:hover {
+  background-color: #fffff3;
+}
+
+/* Add styles for icons and dropdown menu */
+.fa {
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 8%;
+}
+
+table .dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+table .dropdown-toggle:hover .dropdown-menu {
+  display: block;
+}
+
+table .dropdown-menu {
+  right: 0;
+  left: auto;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+table .dropdown-menu a {
+  color: black;
+  padding: 5% 5%;
+  text-decoration: none;
+  display: block;
+}
+
+table .dropdown-menu a:hover {
+  background-color: #c3c3c3;
+}
+
+table .dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+table .img-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  padding-right: 10%;
+}
+
+/* The edit Popup (background) */
+.Editpopup {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 25%;
+  top: 0;
+  width: 50%; /* 50% width */
+  height: 100%; /* full height */
+  overflow: auto; /* Enable scroll if needed */
+}
+
+/* Popup Content */
+.Editpopup .popup-content {
+  border-radius: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background-color: rgb(252, 245, 235);
+  margin: 7% auto;
+  padding: 5%;
+  border: 1px solid #888;
+  width: 50%;
+}
+.Editpopup h2 {
+  text-align: center;
+}
+
+.Editpopup input[type="text"],
+input[type="email"],
+input[type="gender"],
+input[type="date"] {
+  width: 100%;
+  padding: 2%;
+  border-radius: 10px;
+  border: 1px solid rgb(115, 115, 115);
+}
+
+.Editpopup label,
+input,
+option {
+  padding: 3% 0;
+}
+.Editpopup #gender,
+#role {
+  padding: 2%;
+  border-radius: 10px;
+}
+
+.Editpopup input[type="submit"] {
+  margin-top: 7%;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 3% 15%;
+  font-weight: bold;
+  color: white;
+  border: none;
+  font-size: 20px;
+  background-color: rgb(91, 171, 82);
+}
+
+.Editpopup .button {
+  display: flex;
+  justify-content: center;
+}
+.Editpopup input[type="submit"]:hover {
+  background-color: rgb(61, 136, 52);
+}
+/* The Close Button */
+.Editpopup .close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.Editpopup .close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/**************************************/
+
+/* The add Popup (background) */
+.popup {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 25%;
+  top: 0;
+  width: 50%; /* 50% width */
+  height: 100%; /* full height */
+  overflow: auto; /* Enable scroll if needed */
+}
+
+/* Popup Content */
+.popup .popup-content {
+  border-radius: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background-color: rgb(252, 245, 235);
+  margin: 7% auto;
+  padding: 5%;
+  border: 1px solid #888;
+  width: 50%;
+}
+.popup h2 {
+  text-align: center;
+}
+
+.popup input[type="text"],
+input[type="email"],
+input[type="gender"],
+input[type="date"] {
+  width: 100%;
+  padding: 2%;
+  border-radius: 10px;
+  border: 1px solid rgb(115, 115, 115);
+}
+
+.popup label,
+input,
+option {
+  padding: 3% 0;
+}
+.popup #gender,
+#role {
+  padding: 2%;
+  border-radius: 10px;
+}
+
+.popup input[type="submit"] {
+  margin-top: 7%;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 3% 15%;
+  font-weight: bold;
+  color: white;
+  border: none;
+  font-size: 20px;
+  background-color: rgb(91, 171, 82);
+}
+
+.popup .button {
+  display: flex;
+  justify-content: center;
+}
+.popup input[type="submit"]:hover {
+  background-color: rgb(61, 136, 52);
+}
+/* The Close Button */
+.popup .close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.popup .close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+/* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f2dede; /* Red */
+  color: rgb(138, 37, 37);
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}

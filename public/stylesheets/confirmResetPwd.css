@@ -1,0 +1,18 @@
+body{
+    background-color: #E0EEEE;
+  }
+  form h1{
+    color:#97ebad;
+    font-size: 35px;
+    padding-bottom:2%;
+  }
+
+p{
+    color: white;
+    text-align: justify;
+    font-size: 20px;
+}
+
+button{
+      margin-top:5%;
+    }

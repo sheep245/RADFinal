@@ -1,0 +1,80 @@
+body{
+  background-color: #E0EEEE;
+}
+form h1{
+  color:#97ebad;
+  font-size: 50px;
+}
+.input-group-text, input {
+    padding:2%;
+    width: 25%;
+    background-color: lightgray;
+    font-weight:bold;
+    border-right: 2px solid black;
+  }
+
+form p {
+  position: relative;
+}
+
+form i {
+    position: absolute;
+    right: 10px; 
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: black;
+}
+
+button{
+  margin-bottom: 4%;
+}
+ ::placeholder{
+  font-size: 17px;
+ }
+
+ @media screen and (min-width: 768px) and (max-width: 992px){
+  form h1{
+    color:#97ebad;
+    font-size: 40px;
+  }
+  .input-group-text, input {
+      padding:1%;
+      width: 25%;
+      background-color: lightgray;
+      font-weight:bold;
+      border-right: 2px solid black;
+    }
+  
+   ::placeholder{
+    font-size: 15px;
+   }
+ }
+ 
+ 
+ @media screen and (max-width: 768px) {
+  form h1{
+    color:#97ebad;
+    font-size: 35px;
+  }
+  .input-group-text, input {
+      padding:1%;
+      width: 25%;
+      background-color: lightgray;
+      font-weight:bold;
+      border-right: 2px solid black;
+    }
+ }
+
+ .password {
+  position: relative;
+}
+
+.password i {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: black;
+}
